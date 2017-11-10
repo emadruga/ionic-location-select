@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
-import { LocationSelectPage } from './location-select';
+import { LocationSelect } from './location-select';
 
 @NgModule({
   declarations: [
-    LocationSelectPage,
+    LocationSelect,
   ],
   imports: [
-    IonicPageModule.forChild(LocationSelectPage),
+    IonicPageModule.forChild(LocationSelect),
   ],
 })
-export class LocationSelectPageModule {}
+export class LocationSelectModule {}

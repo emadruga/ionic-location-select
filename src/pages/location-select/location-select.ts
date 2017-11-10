@@ -52,8 +52,8 @@ export class LocationSelect {
         this.placesService.getDetails({placeId: place.place_id}, (details) => {
  
             this.zone.run(() => {
- 
-                location.name = details.name;
+		console.log(details);
+                location.name = details.formatted_address;
                 location.lat = details.geometry.location.lat();
                 location.lng = details.geometry.location.lng();
                 this.saveDisabled = false;
