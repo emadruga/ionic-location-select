@@ -54,11 +54,13 @@ export class LocationSelect {
             this.zone.run(() => {
 		console.log(details);
                 location.name = details.formatted_address;
+		this.query = details.formatted_address;
                 location.lat = details.geometry.location.lat();
                 location.lng = details.geometry.location.lng();
                 this.saveDisabled = false;
  
                 this.maps.map.setCenter({lat: location.lat, lng: location.lng});
+                this.maps.map.setZoom(17);
  
                 this.location = location;
  
@@ -99,7 +101,12 @@ export class LocationSelect {
     }
  
     save(){
-        this.viewCtrl.dismiss(this.location);
+	if(this.location) {
+	    console.log(this.location);
+	    this.maps.changeMarker(location.latitude, location.longitude);
+	}
+	
+        //this.viewCtrl.dismiss(this.location);
     }
  
     close(){
