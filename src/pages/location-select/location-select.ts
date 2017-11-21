@@ -48,7 +48,7 @@ export class LocationSelect {
             lng: null,
             name: place.name
         };
- 
+
         this.placesService.getDetails({placeId: place.place_id}, (details) => {
  
             this.zone.run(() => {
@@ -77,10 +77,11 @@ export class LocationSelect {
         if(this.query.length > 0 && !this.searchDisabled) {
  
             let config = {
-                types: ['geocode'],
+                // types: ['geocode'],
+                types: ['address'],
+		componentRestrictions: {country: 'BR'} ,
                 input: this.query
             }
- 
             this.autocompleteService.getPlacePredictions(config, (predictions, status) => {
  
                 if(status == google.maps.places.PlacesServiceStatus.OK && predictions){
@@ -103,7 +104,8 @@ export class LocationSelect {
     save(){
 	if(this.location) {
 	    console.log(this.location);
-	    this.maps.changeMarker(location.latitude, location.longitude);
+	    //this.maps.changeMarker(location.latitude, location.longitude);
+	    this.maps.startNavigating();
 	}
 	
         //this.viewCtrl.dismiss(this.location);
