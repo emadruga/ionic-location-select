@@ -105,7 +105,7 @@ export class LocationSelect {
 	if(this.location) {
 	    console.log(this.location);
 	    //this.maps.changeMarker(location.latitude, location.longitude);
-	    this.maps.startNavigating();
+	    this.maps.startNavigating(this.location.name);
 	}
 	
         //this.viewCtrl.dismiss(this.location);
