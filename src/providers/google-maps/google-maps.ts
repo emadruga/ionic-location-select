@@ -170,43 +170,17 @@ export class GoogleMaps {
 	
     }
 
-    startNavigating(name: string){
- 
+   updateMap(orig: string, dst: string) {
+
         let directionsService     = new google.maps.DirectionsService;
         let directionsDisplay     = new google.maps.DirectionsRenderer;
         let distanceMatrixService = new google.maps.DistanceMatrixService;
 	
-	let destinationA = name;
-	let origin1 = 'posto 2, copacabana';
-
-	this.geolocation.getCurrentPosition()
-	    .then((position) => {
-
-		let geocode = new google.maps.Geocoder;
-		let latlng = { lat: position.coords.latitude,
-			       lng: position.coords.longitude };
-
-		geocode.geocode({'location': latlng}, (results,status) => {
-		    if (status === google.maps.GeocoderStatus.OK) {
-			if (results[1]) {
-			    origin1 = results[1].formatted_address;
-			    console.log('From: ' + origin1);
-			} else {
-			    console.log('No revgeo results found');
-			}
-		    } else {
-			console.log('Geocoder failed due to: ' + status);
-		    }
-		});
-				
-	    });
-
-
 	directionsDisplay.setMap(this.map);
 	
 	directionsService.route({
-	    origin: origin1,
-	    destination: destinationA,
+	    origin: orig,
+	    destination: dst,
 	    travelMode: google.maps.TravelMode['DRIVING']
 	}, (res, status) => {
 	    
@@ -220,8 +194,8 @@ export class GoogleMaps {
 
 	// get distances for the same route
 	distanceMatrixService.getDistanceMatrix({
-	    origins: [origin1],
-	    destinations: [destinationA],
+	    origins: [orig],
+	    destinations: [dst],
 	    travelMode: google.maps.TravelMode['DRIVING'],
 	    unitSystem: google.maps.UnitSystem.METRIC,
 	    avoidHighways: false,
@@ -245,7 +219,37 @@ export class GoogleMaps {
 	    }
 	});
 
-
     }
+ 
+    startNavigating(name: string){
+ 
+	let destinationA = name;
+	let origin1 = 'posto 10, ipanema';
+
+	this.geolocation.getCurrentPosition()
+	    .then((position) => {
+
+		let geocode = new google.maps.Geocoder;
+		let latlng = { lat: position.coords.latitude,
+			       lng: position.coords.longitude };
+
+		geocode.geocode({'location': latlng}, (results,status) => {
+		    if (status === google.maps.GeocoderStatus.OK) {
+			if (results[1]) {
+			    origin1 = results[1].formatted_address;
+			    console.log('From: ' + origin1);
+			    this.updateMap(origin1,destinationA);
+			} else {
+			    console.log('No revgeo results found');
+			}
+		    } else {
+			console.log('Geocoder failed due to: ' + status);
+		    }
+		});
+				
+	    });
+    }
+
+
 
 }
