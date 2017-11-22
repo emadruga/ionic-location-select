@@ -179,26 +179,27 @@ export class GoogleMaps {
 	let destinationA = name;
 	let origin1 = 'posto 2, copacabana';
 
-	// this.geolocation.getCurrentPosition()
-	//     .then((position) => {
+	this.geolocation.getCurrentPosition()
+	    .then((position) => {
 
-	// 	let geocode = new google.maps.Geocoder;
-	// 	let latlng = { lat: position.coords.latitude,
-	// 		       lng: position.coords.longitude };
+		let geocode = new google.maps.Geocoder;
+		let latlng = { lat: position.coords.latitude,
+			       lng: position.coords.longitude };
 
-	// 	geocode.geocode({'location': latlng}, (results,status) => {
-	// 	    if (status === 'OK') {
-	// 		if (results[1]) {
-	// 		    origin1 = results[1].formatted_address;
-	// 		} else {
-	// 		    console.log('No revgeo results found');
-	// 		}
-	// 	    } else {
-	// 		console.log('Geocoder failed due to: ' + status);
-	// 	    }
-	// 	});
+		geocode.geocode({'location': latlng}, (results,status) => {
+		    if (status === google.maps.GeocoderStatus.OK) {
+			if (results[1]) {
+			    origin1 = results[1].formatted_address;
+			    console.log('From: ' + origin1);
+			} else {
+			    console.log('No revgeo results found');
+			}
+		    } else {
+			console.log('Geocoder failed due to: ' + status);
+		    }
+		});
 				
-	//     });
+	    });
 
 
 	directionsDisplay.setMap(this.map);
