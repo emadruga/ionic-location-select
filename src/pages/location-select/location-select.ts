@@ -77,8 +77,8 @@ export class LocationSelect {
         if(this.query.length > 0 && !this.searchDisabled) {
  
             let config = {
-                // types: ['geocode'],
-                types: ['address'],
+                types: ['geocode'],
+                // types: ['address'],
 		componentRestrictions: {country: 'BR'} ,
                 input: this.query
             }

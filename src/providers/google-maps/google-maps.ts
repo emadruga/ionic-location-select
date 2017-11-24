@@ -13,6 +13,13 @@ export class GoogleMaps {
     mapLoadedObserver: any;
     currentMarker: any;
     apiKey: string = "AIzaSyD8Bb8u9fTTy9t_gzsYHIPPK-v2jGYGlr8";
+
+    markersArray = [];
+
+    directionsService: any;
+    directionsDisplay: any;
+    distanceMatrixService: any;
+
     
     constructor(public connectivityService: Connectivity, public geolocation: Geolocation) {
 	
@@ -51,7 +58,8 @@ export class GoogleMaps {
 		    script.id = "googleMaps";
 		    
 		    if(this.apiKey){
-			script.src = 'http://maps.google.com/maps/api/js?key=' + this.apiKey + '&callback=mapInit&libraries=places';
+			script.src = 'http://maps.google.com/maps/api/js?key=' +
+			    this.apiKey + '&callback=mapInit&libraries=places';
 		    } else {
 			script.src = 'http://maps.google.com/maps/api/js?callback=mapInit';      
 		    }
@@ -96,7 +104,10 @@ export class GoogleMaps {
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		    }
 		    
-		    this.map = new google.maps.Map(this.mapElement, mapOptions);
+		    this.map                   = new google.maps.Map(this.mapElement, mapOptions);
+		    this.directionsService     = new google.maps.DirectionsService;
+		    this.directionsDisplay     = new google.maps.DirectionsRenderer({suppressMarkers: true});
+		    this.distanceMatrixService = new google.maps.DistanceMatrixService;
 		    
 		    
 		    resolve(true);
@@ -170,22 +181,70 @@ export class GoogleMaps {
 	
     }
 
+    clearAllMarkers() {
+	for (var i = 0; i < this.markersArray.length; i++ ) {
+	    this.markersArray[i].setMap(null);
+	}
+	
+	this.markersArray.length = 0;
+    }
+    
+    makeMarker( position, icon, title ) {
+	var marker = new google.maps.Marker({
+	    position: position,
+	    map: this.map,
+	    icon: icon,
+	    title: title
+	});
+	this.markersArray.push(marker);
+	google.maps.event.addListener(marker,"click",function(){});
+    }
+    
    updateMap(orig: string, dst: string) {
 
-        let directionsService     = new google.maps.DirectionsService;
-        let directionsDisplay     = new google.maps.DirectionsRenderer;
-        let distanceMatrixService = new google.maps.DistanceMatrixService;
+
+       //  var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+       var image1 = 'assets/imgs/marker-red-small.png';
+       var image2 = 'assets/imgs/marker-green-small.png';
+
+       // Start/Finish icons
+       var icons = {
+	   start: new google.maps.MarkerImage(
+	       // URL
+	       image1,
+	       // (width,height)
+	       new google.maps.Size( 44, 32 ),
+	       // The origin point (x,y)
+	       new google.maps.Point( 0, 0 ),
+	       // The anchor point (x,y)
+	       new google.maps.Point( 22, 32 )
+	   ),
+	   end: new google.maps.MarkerImage(
+	       // URL
+	       image2,
+	       // (width,height)
+	       new google.maps.Size( 44, 32 ),
+	       // The origin point (x,y)
+	       new google.maps.Point( 0, 0 ),
+	       // The anchor point (x,y)
+	       new google.maps.Point( 22, 32 )
+	   )
+       };
 	
-	directionsDisplay.setMap(this.map);
+       this.directionsDisplay.setMap(this.map);
 	
-	directionsService.route({
+       this.directionsService.route({
 	    origin: orig,
 	    destination: dst,
 	    travelMode: google.maps.TravelMode['DRIVING']
 	}, (res, status) => {
 	    
 	    if(status == google.maps.DirectionsStatus.OK){
-		directionsDisplay.setDirections(res);
+		this.directionsDisplay.setDirections(res);
+		var leg = res.routes[ 0 ].legs[ 0 ];
+		this.makeMarker( leg.start_location, icons.start, "A" );
+		this.makeMarker( leg.end_location, icons.end, 'B' );
+
 	    } else {
 		console.warn(status);
 	    }
@@ -193,7 +252,7 @@ export class GoogleMaps {
 	});
 
 	// get distances for the same route
-	distanceMatrixService.getDistanceMatrix({
+	this.distanceMatrixService.getDistanceMatrix({
 	    origins: [orig],
 	    destinations: [dst],
 	    travelMode: google.maps.TravelMode['DRIVING'],
@@ -228,6 +287,10 @@ export class GoogleMaps {
 
 	this.geolocation.getCurrentPosition()
 	    .then((position) => {
+
+		if (this.markersArray.length > 0) {
+		    this.clearAllMarkers();
+		}
 
 		let geocode = new google.maps.Geocoder;
 		let latlng = { lat: position.coords.latitude,
