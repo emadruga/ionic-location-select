@@ -207,27 +207,31 @@ export class GoogleMaps {
        var image1 = 'assets/imgs/marker-red-small.png';
        var image2 = 'assets/imgs/marker-green-small.png';
 
+       if (!this.mapInitialised) {
+	   return;
+       }
+
        // Start/Finish icons
        var icons = {
 	   start: new google.maps.MarkerImage(
 	       // URL
 	       image1,
 	       // (width,height)
-	       new google.maps.Size( 44, 32 ),
+	       new google.maps.Size( 30, 30 ),
 	       // The origin point (x,y)
 	       new google.maps.Point( 0, 0 ),
 	       // The anchor point (x,y)
-	       new google.maps.Point( 22, 32 )
+	       new google.maps.Point( 15, 30 )
 	   ),
 	   end: new google.maps.MarkerImage(
 	       // URL
 	       image2,
 	       // (width,height)
-	       new google.maps.Size( 44, 32 ),
+	       new google.maps.Size( 30, 30 ),
 	       // The origin point (x,y)
 	       new google.maps.Point( 0, 0 ),
 	       // The anchor point (x,y)
-	       new google.maps.Point( 22, 32 )
+	       new google.maps.Point( 15, 30 )
 	   )
        };
 	
