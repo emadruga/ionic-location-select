@@ -202,38 +202,24 @@ export class GoogleMaps {
     
    updateMap(orig: string, dst: string) {
 
-
-       //  var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
-       var image1 = 'assets/imgs/marker-red-small.png';
-       var image2 = 'assets/imgs/marker-green-small.png';
-
-       if (!this.mapInitialised) {
-	   return;
-       }
-
-       // Start/Finish icons
-       var icons = {
-	   start: new google.maps.MarkerImage(
-	       // URL
-	       image1,
-	       // (width,height)
-	       new google.maps.Size( 30, 30 ),
-	       // The origin point (x,y)
-	       new google.maps.Point( 0, 0 ),
-	       // The anchor point (x,y)
-	       new google.maps.Point( 15, 30 )
-	   ),
-	   end: new google.maps.MarkerImage(
-	       // URL
-	       image2,
-	       // (width,height)
-	       new google.maps.Size( 30, 30 ),
-	       // The origin point (x,y)
-	       new google.maps.Point( 0, 0 ),
-	       // The anchor point (x,y)
-	       new google.maps.Point( 15, 30 )
-	   )
-       };
+       var start_image = {
+          url: 'assets/imgs/marker-red-small.png',
+          // This marker is 30 pixels wide by 30 pixels high.
+          size: new google.maps.Size(30, 30),
+          // The origin for this image is (0, 0).
+          origin: new google.maps.Point(0, 0),
+          // The anchor for this image
+          anchor: new google.maps.Point(15, 30)
+        };
+       var end_image = {
+          url: 'assets/imgs/marker-blue-small.png',
+          // This marker is 30 pixels wide by 30 pixels high.
+          size: new google.maps.Size(30, 30),
+          // The origin for this image is (0, 0).
+          origin: new google.maps.Point(0, 0),
+          // The anchor for this image
+          anchor: new google.maps.Point(15, 30)
+        }; 
 	
        this.directionsDisplay.setMap(this.map);
 	
@@ -246,8 +232,8 @@ export class GoogleMaps {
 	    if(status == google.maps.DirectionsStatus.OK){
 		this.directionsDisplay.setDirections(res);
 		var leg = res.routes[ 0 ].legs[ 0 ];
-		this.makeMarker( leg.start_location, icons.start, "A" );
-		this.makeMarker( leg.end_location, icons.end, 'B' );
+		this.makeMarker( leg.start_location, start_image, "A" );
+		this.makeMarker( leg.end_location, end_image, "B" );
 
 	    } else {
 		console.warn(status);
