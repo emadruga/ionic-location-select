@@ -219,7 +219,9 @@ export class GoogleMaps {
           origin: new google.maps.Point(0, 0),
           // The anchor for this image
           anchor: new google.maps.Point(15, 30)
-        }; 
+       };
+
+       var infobox_position = null;
 	
        this.directionsDisplay.setMap(this.map);
 	
@@ -231,7 +233,9 @@ export class GoogleMaps {
 	    
 	    if(status == google.maps.DirectionsStatus.OK){
 		this.directionsDisplay.setDirections(res);
+		console.log(res.routes);
 		var leg = res.routes[ 0 ].legs[ 0 ];
+		infobox_position = leg.start_location;
 		this.makeMarker( leg.start_location, start_image, "A" );
 		this.makeMarker( leg.end_location, end_image, "B" );
 
@@ -263,6 +267,18 @@ export class GoogleMaps {
 				    ' to ' + destinationList[j] +
 				    ': Distance: ' + results[j].distance.text +
 				    ', time: ' +  results[j].duration.text);
+
+			if (infobox_position == null) {
+			    var infowindow2 = new google.maps.InfoWindow();
+			    infowindow2.setContent(results[j].distance.text +
+						   "<br>" +  results[j].duration.text +
+						   " ");
+
+			    infowindow2.setPosition(infobox_position);
+			    infowindow2.open(this.map);
+			    
+			}
+			
 		    }
 		}
 	    }
