@@ -189,7 +189,7 @@ export class GoogleMaps {
 	this.markersArray.length = 0;
     }
     
-    makeMarker( position, icon, title ) {
+    makeMarker( position, icon, title, info) {
 	var marker = new google.maps.Marker({
 	    position: position,
 	    map: this.map,
@@ -197,7 +197,12 @@ export class GoogleMaps {
 	    title: title
 	});
 	this.markersArray.push(marker);
-	google.maps.event.addListener(marker,"click",function(){});
+	
+	if (info != null) {
+	    google.maps.event.addListener(marker, "click", function(){
+		info.open(this.map, marker);
+	    });
+	}
     }
     
    updateMap(orig: string, dst: string) {
@@ -221,8 +226,6 @@ export class GoogleMaps {
           anchor: new google.maps.Point(15, 30)
        };
 
-       var infobox_position = null;
-	
        this.directionsDisplay.setMap(this.map);
 	
        this.directionsService.route({
@@ -234,54 +237,38 @@ export class GoogleMaps {
 	    if(status == google.maps.DirectionsStatus.OK){
 		this.directionsDisplay.setDirections(res);
 		console.log(res.routes);
+
+		// Only care about first given route
 		var leg = res.routes[ 0 ].legs[ 0 ];
-		infobox_position = leg.start_location;
-		this.makeMarker( leg.start_location, start_image, "A" );
-		this.makeMarker( leg.end_location, end_image, "B" );
+
+		var infowindow1 = new google.maps.InfoWindow();
+		infowindow1.setContent("<b>"  + orig + "</b>" +
+				       "<br>" + 
+				       "Partida ");
+
+		var infowindow2 = new google.maps.InfoWindow();
+		infowindow2.setContent("<b>"  + dst + "</b>" +
+				       "<br>" + leg.distance.text +
+				       "<br>" + leg.duration.text +
+				       " ");
+
+		this.makeMarker( leg.start_location, start_image,
+				 "Partida", infowindow1 );
+		this.makeMarker( leg.end_location, end_image,
+				 "Chegada", infowindow2 );
+		
+
+		console.log('From ' +  orig +
+			    ' to ' + dst +
+			    ': Distance: ' + leg.distance.text +
+			    ', time: '     + leg.duration.text);
+
+
 
 	    } else {
 		console.warn(status);
 	    }
 	    
-	});
-
-	// get distances for the same route
-	this.distanceMatrixService.getDistanceMatrix({
-	    origins: [orig],
-	    destinations: [dst],
-	    travelMode: google.maps.TravelMode['DRIVING'],
-	    unitSystem: google.maps.UnitSystem.METRIC,
-	    avoidHighways: false,
-	    avoidTolls: false
-	}, (response, status) => {
-	    if (status !== google.maps.DistanceMatrixStatus.OK) {
-		console.log('Error was: ' + status);
-	    } else {
-		console.log('Good: ' +  status);
-		var originList = response.originAddresses;
-		var destinationList = response.destinationAddresses;
-		for (var i = 0; i < originList.length; i++) {
-		    var results = response.rows[i].elements;
-		    for (var j = 0; j < results.length; j++) {
-			console.log('From ' +  originList[i] +
-				    ' to ' + destinationList[j] +
-				    ': Distance: ' + results[j].distance.text +
-				    ', time: ' +  results[j].duration.text);
-
-			if (infobox_position == null) {
-			    var infowindow2 = new google.maps.InfoWindow();
-			    infowindow2.setContent(results[j].distance.text +
-						   "<br>" +  results[j].duration.text +
-						   " ");
-
-			    infowindow2.setPosition(infobox_position);
-			    infowindow2.open(this.map);
-			    
-			}
-			
-		    }
-		}
-	    }
 	});
 
     }
