@@ -236,7 +236,7 @@ export class GoogleMaps {
 	    
 	    if(status == google.maps.DirectionsStatus.OK){
 		this.directionsDisplay.setDirections(res);
-		console.log(res.routes);
+		// console.log(res.routes);
 
 		// Only care about first given route
 		var leg = res.routes[ 0 ].legs[ 0 ];
@@ -273,9 +273,9 @@ export class GoogleMaps {
 
     }
  
-    startNavigating(name: string){
+    startNavigating(dest){
  
-	let destinationA = name;
+	let destinationA = dest.name;
 	let origin1 = 'posto 10, ipanema';
 
 	this.geolocation.getCurrentPosition()
@@ -293,7 +293,8 @@ export class GoogleMaps {
 		    if (status === google.maps.GeocoderStatus.OK) {
 			if (results[1]) {
 			    origin1 = results[1].formatted_address;
-			    console.log('From: ' + origin1);
+			    console.log(latlng);
+			    console.log(dest);
 			    this.updateMap(origin1,destinationA);
 			} else {
 			    console.log('No revgeo results found');
