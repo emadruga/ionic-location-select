@@ -19,6 +19,7 @@ export class GoogleMaps {
     directionsService: any;
     directionsDisplay: any;
     distanceMatrixService: any;
+    trafficLayer: any;
 
     
     constructor(public connectivityService: Connectivity, public geolocation: Geolocation) {
@@ -108,6 +109,7 @@ export class GoogleMaps {
 		    this.directionsService     = new google.maps.DirectionsService;
 		    this.directionsDisplay     = new google.maps.DirectionsRenderer({suppressMarkers: true});
 		    this.distanceMatrixService = new google.maps.DistanceMatrixService;
+		    this.trafficLayer          = new google.maps.TrafficLayer;
 		    
 		    
 		    resolve(true);
@@ -226,6 +228,7 @@ export class GoogleMaps {
           anchor: new google.maps.Point(15, 30)
        };
 
+       this.trafficLayer.setMap(this.map);
        this.directionsDisplay.setMap(this.map);
 	
        this.directionsService.route({
