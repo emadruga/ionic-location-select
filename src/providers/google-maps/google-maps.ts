@@ -207,7 +207,8 @@ export class GoogleMaps {
 	}
     }
     
-   updateMap(orig: string, dst: string) {
+    updateMap(orig: google.maps.LatLng,oname: string,
+	      dst: google.maps.LatLng, dname: string) {
 
        var start_image = {
           url: 'assets/imgs/marker-red-small.png',
@@ -245,12 +246,12 @@ export class GoogleMaps {
 		var leg = res.routes[ 0 ].legs[ 0 ];
 
 		var infowindow1 = new google.maps.InfoWindow();
-		infowindow1.setContent("<b>"  + orig + "</b>" +
+		infowindow1.setContent("<b>"  + oname + "</b>" +
 				       "<br>" + 
 				       "Partida ");
 
 		var infowindow2 = new google.maps.InfoWindow();
-		infowindow2.setContent("<b>"  + dst + "</b>" +
+		infowindow2.setContent("<b>"  + dname + "</b>" +
 				       "<br>" + leg.distance.text +
 				       "<br>" + leg.duration.text +
 				       " ");
@@ -261,8 +262,8 @@ export class GoogleMaps {
 				 "Chegada", infowindow2 );
 		
 
-		console.log('From ' +  orig +
-			    ' to ' + dst +
+		console.log('From ' +  oname +
+			    ' to ' + dname +
 			    ': Distance: ' + leg.distance.text +
 			    ', time: '     + leg.duration.text);
 
@@ -278,9 +279,6 @@ export class GoogleMaps {
  
     startNavigating(dest){
  
-	let destinationA = dest.name;
-	let origin1 = 'posto 10, ipanema';
-
 	this.geolocation.getCurrentPosition()
 	    .then((position) => {
 
@@ -288,25 +286,27 @@ export class GoogleMaps {
 		    this.clearAllMarkers();
 		}
 
-		let geocode = new google.maps.Geocoder;
-		let latlng = { lat: position.coords.latitude,
-			       lng: position.coords.longitude };
+		let geo = new google.maps.Geocoder;
+		
+		let origin_latlng = new google.maps.LatLng(position.coords.latitude,
+							   position.coords.longitude );
+		let dest_latlng   = new google.maps.LatLng(dest.lat,
+							   dest.lng );
 
-		geocode.geocode({'location': latlng}, (results,status) => {
+		geo.geocode({'location': origin_latlng}, (results,status) => {
 		    if (status === google.maps.GeocoderStatus.OK) {
-			if (results[1]) {
-			    origin1 = results[1].formatted_address;
-			    console.log(latlng);
-			    console.log(dest);
-			    this.updateMap(origin1,destinationA);
-			} else {
-			    console.log('No revgeo results found');
-			}
+			let origin_name = results[1].formatted_address;
+			this.updateMap(origin_latlng, origin_name,
+				       dest_latlng, dest.name);
 		    } else {
-			console.log('Geocoder failed due to: ' + status);
+			console.log('Cannot geocode' +  origin_latlng);
+			console.log(status);
 		    }
 		});
-				
+
+	    }, (err) => {
+		console.log('Cannot find current position!');
+		console.log(err);
 	    });
     }
 

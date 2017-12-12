@@ -10,6 +10,7 @@ import { Connectivity } from '../providers/connectivity-service/connectivity-ser
 import { GoogleMaps } from '../providers/google-maps/google-maps';
 import { Network } from '@ionic-native/network';
 import { Geolocation } from '@ionic-native/geolocation';
+import { UberProvider } from '../providers/uber/uber';
  
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { Geolocation } from '@ionic-native/geolocation';
     GoogleMaps,
     Network,
     Geolocation,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    UberProvider
   ]
 })
 export class AppModule {}
