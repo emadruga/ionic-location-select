@@ -1,15 +1,18 @@
-import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
+import { Http, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
 
 
 @Injectable()
 export class UberProvider {
 
+    //@@ For proper debug: have to add 'http://localhost:8100' to
+    //   Origin URI on the developer's Uber Console
+
     estimates: any = [];
     server_token = 'u5aqYXP8VF_1KzqHEM-wjcfCWQKV5YVrlj_-QFA1';
 
-    constructor(public http: Http) {
+    constructor(private http: Http) {
 	console.log('Hello UberProvider Provider');
     }
 
@@ -20,21 +23,31 @@ export class UberProvider {
 	    + '&end_latitude='    + end_lat
 	    + '&end_longitude='   + end_lng ;
 
-	//Make a Http request to the URL and subscribe to the response
-	this.http.get(url).map(res => res.json()).subscribe(data => {
+	let uheaders = new Headers({
+	    'Authorization'  :  'Token ' + this.server_token,
+	    'Content-Type'   :  'application/json',
+	    'Accept-Language':  'pt_BR'
+	});
 
-	    console.log(data);
+	let opt = new RequestOptions({ headers: uheaders });
+
+
+	//Make a Http request to the URL and subscribe to the response
+	this.http.get(url, opt ).map(res => res.json()).subscribe(data => {
+
+	    //console.log('uber: got response');
+	    //console.log(data);
 	    
 	    this.estimates = data.prices;
 
-	    	    //Loop through all NEW posts that have been added. 
+	    //Loop through all NEW estimates that have been added. 
 	    for(let i = 0; i < this.estimates.length; i++){
 		let estimate = this.estimates[i];
 		console.log(estimate);
 	    }
 	}, (err) => {
 	    //Fail silently, in this case the loading spinner will cease to display
-	    console.log("query doesn't exist!");
+	    console.log("uber: cannot fetch price estimates...!");
 	});
 
     }

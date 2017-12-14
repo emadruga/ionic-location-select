@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Connectivity } from '../../providers/connectivity-service/connectivity-service';
+import { UberProvider } from '../../providers/uber/uber';
 import { Geolocation } from '@ionic-native/geolocation';
 
 @Injectable()
@@ -22,7 +23,8 @@ export class GoogleMaps {
     trafficLayer: any;
 
     
-    constructor(public connectivityService: Connectivity, public geolocation: Geolocation) {
+    constructor(public connectivityService: Connectivity, public geolocation: Geolocation,
+	        public uber: UberProvider) {
 	
     }
     
@@ -298,6 +300,10 @@ export class GoogleMaps {
 			let origin_name = results[1].formatted_address;
 			this.updateMap(origin_latlng, origin_name,
 				       dest_latlng, dest.name);
+			this.uber.fetchPriceEstimates(position.coords.latitude,
+						      position.coords.longitude,
+						      dest.lat,
+						      dest.lng  );
 		    } else {
 			console.log('Cannot geocode' +  origin_latlng);
 			console.log(status);
