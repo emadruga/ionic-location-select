@@ -22,7 +22,9 @@ export class LocationSelect {
     saveDisabled: boolean;
     location: any; 
  
-    constructor(public navCtrl: NavController, public zone: NgZone, public maps: GoogleMaps, public platform: Platform, public geolocation: Geolocation, public viewCtrl: ViewController) {
+    constructor(public navCtrl: NavController, public zone: NgZone,
+		public maps: GoogleMaps, public platform: Platform,
+		public geolocation: Geolocation, public viewCtrl: ViewController) {
         this.searchDisabled = true;
         this.saveDisabled = true;
     }
